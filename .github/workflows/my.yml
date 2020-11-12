@@ -1,0 +1,51 @@
+name: Java CI
+on: 
+  push:
+      branches:
+        - develop
+        - '**/feature.*/'
+        - master
+jobs:       
+  job7:
+    name: job7 Publish to GitHub Packages Apache Maven
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml
+
+      - name: Publish to GitHub Packages Apache Maven
+        run: mvn deploy
+        env:
+          GITHUB_TOKEN: ${{ github.token }} # GITHUB_TOKEN is the default env for the password
+
+  job10:
+      name: job10 Deploy to Herroku
+      needs: job7
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v2
+        - uses: akhileshns/heroku-deploy@v3.6.8 # This is the action
+          with:
+            heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+            heroku_app_name: ${{secrets.HEROKU_APP_NAME}} #Must be unique in Heroku
+            heroku_email: ${{secrets.HEROKU_EMAIL}}
+            #buildpack: ${{secrets.HEROKU_BUILD_PACK}}
+            #branch: "master"
+
+
+            
+
+    
+    
+        
+      
+
+
+
+    
